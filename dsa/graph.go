@@ -38,6 +38,15 @@ func (g *Graph) AddUnDirectedEdge(from, to string, weight int) {
 	g.AddDirectedEdge(to, from, weight)
 }
 
+func (g *Graph) RemoveDirectedEdge(from, to string) {
+	delete(g.vertices[from].edges, to)
+}
+
+func (g *Graph) RemoveUnDirectedEdge(from, to string) {
+	g.RemoveDirectedEdge(from, to)
+	g.RemoveDirectedEdge(to, from)
+}
+
 func (g *Graph) ForEachVertex(f func(*Vertex)) {
 	for _, v := range g.vertices {
 		f(v)
