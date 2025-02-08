@@ -1,0 +1,152 @@
+
+import (
+	"container/heap"
+)
+
+// Dijkstra Algorithm
+
+func Dijkstra(g *Graph, start, end string) ([]string, int) {
+	// Min-heap priority queue
+	pq := NewMinHeap()
+	heap.Init(pq)
+
+	// Distance and previous node tracking
+	distances := make(map[string]int)
+	prev := make(map[string]string)
+	visited := make(map[string]bool)
+
+	// Initialize distances
+	g.ForEachVertex(func(v *Vertex) {
+		distances[v.GetKey()] = 1<<31 - 1 // Max int (infinity)
+	})
+
+	distances[start] = 0
+
+	heap.Push(pq, &Item{Value: start, Priority: 0})
+
+	for pq.Len() > 0 {
+		item := heap.Pop(pq).(*Item)
+		node := item.Value
+
+		if node == end {
+			break
+		}
+
+		visited[node] = true
+		g.GetVertex(node).ForEachEdge(func(neighbor string, weight int) {
+			if !visited[neighbor] {
+				newDist := distances[node] + weight
+				if newDist < distances[neighbor] {
+					distances[neighbor] = newDist
+					prev[neighbor] = node
+					heap.Push(pq, &Item{Value: neighbor, Priority: newDist})
+				}
+			}
+		})
+	}
+
+	// Reconstruct shortest path
+	path := []string{}
+	for at := end; at != ""; at = prev[at] {
+		path = append([]string{at}, path...)
+	}
+
+	// If path doesn't contain the start node, no valid path exists
+	if len(path) == 0 || path[0] != start {
+		return nil, -1
+	}
+
+	return path, distances[end]
+}
+
+// Undirected Graph
+
+type Vertex struct {
+	key   string
+	edges map[string]int
+}
+
+func (v *Vertex) GetKey() string {
+	return v.key
+}
+
+func (v *Vertex) ForEachEdge(f func(string, int)) {
+	for key, weight := range v.edges {
+		f(key, weight)
+	}
+}
+
+type Graph struct {
+	vertices map[string]*Vertex
+}
+
+func NewGraph() *Graph {
+	return &Graph{vertices: make(map[string]*Vertex)}
+}
+
+func (g *Graph) AddVertex(key string) {
+	g.vertices[key] = &Vertex{key, make(map[string]int)}
+}
+
+func (g *Graph) AddEdge(from, to string, distance int) {
+	g.vertices[from].edges[to] = distance
+	g.vertices[to].edges[from] = distance
+}
+
+func (g *Graph) ForEachVertex(f func(*Vertex)) {
+	for _, v := range g.vertices {
+		f(v)
+	}
+}
+
+func (g *Graph) GetVertex(key string) *Vertex {
+	return g.vertices[key]
+}
+
+func (g *Graph) FindShortestPath(start, end string) ([]string, int) {
+	return Dijkstra(g, start, end)
+}
+
+// Priority Queue 
+
+type Item struct {
+	Value    string
+	Priority int
+}
+
+// PriorityQueue implements a heap interface
+type PriorityQueue struct {
+	items []*Item
+	less  func(i, j int) bool
+}
+
+func (pq PriorityQueue) Len() int           { return len(pq.items) }
+func (pq PriorityQueue) Less(i, j int) bool { return pq.less(i, j) }
+func (pq PriorityQueue) Swap(i, j int)      { pq.items[i], pq.items[j] = pq.items[j], pq.items[i] }
+
+func (pq *PriorityQueue) Push(x any) {
+	item := x.(*Item)
+	pq.items = append(pq.items, item)
+}
+
+func (pq *PriorityQueue) Pop() any {
+	old := pq.items
+	n := len(old)
+	item := old[n-1]
+	pq.items = old[:n-1]
+	return item
+}
+
+func NewMinHeap() *PriorityQueue {
+	pq := &PriorityQueue{}
+	pq.less = func(i, j int) bool { return pq.items[i].Priority < pq.items[j].Priority }
+	heap.Init(pq)
+	return pq
+}
+
+func NewMaxHeap() *PriorityQueue {
+	pq := &PriorityQueue{}
+	pq.less = func(i, j int) bool { return pq.items[i].Priority > pq.items[j].Priority }
+	heap.Init(pq)
+	return pq
+}
