@@ -29,9 +29,13 @@ func (g *Graph) AddVertex(key string) {
 	g.vertices[key] = &Vertex{key, make(map[string]int)}
 }
 
-func (g *Graph) AddEdge(from, to string, distance int) {
-	g.vertices[from].edges[to] = distance
-	g.vertices[to].edges[from] = distance
+func (g *Graph) AddDirectedEdge(from, to string, weight int) {
+	g.vertices[from].edges[to] = weight
+}
+
+func (g *Graph) AddUnDirectedEdge(from, to string, weight int) {
+	g.AddDirectedEdge(from, to, weight)
+	g.AddDirectedEdge(to, from, weight)
 }
 
 func (g *Graph) ForEachVertex(f func(*Vertex)) {
