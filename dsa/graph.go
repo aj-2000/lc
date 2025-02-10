@@ -2,7 +2,6 @@ package dsa
 
 import (
 	"fmt"
-	"strconv"
 )
 
 type Vertex struct {
@@ -28,14 +27,12 @@ func NewGraph() *Graph {
 	return &Graph{vertices: make(map[string]*Vertex)}
 }
 
-func NewGraphFromEdges(edges [][]int) *Graph {
-	graph := NewGraph()
-	for _, edge := range edges {
-		graph.AddVertex(strconv.Itoa(edge[0]))
-		graph.AddVertex(strconv.Itoa(edge[1]))
-		graph.AddDirectedEdge(strconv.Itoa(edge[0]), strconv.Itoa(edge[1]), edge[2])
+func (g *Graph) GetAllVertex() []*Vertex {
+	vertices := make([]*Vertex, 0)
+	for _, v := range g.vertices {
+		vertices = append(vertices, v)
 	}
-	return graph
+	return vertices
 }
 
 func (g *Graph) AddVertex(key string) {

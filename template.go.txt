@@ -83,14 +83,12 @@ func NewGraph() *Graph {
 	return &Graph{vertices: make(map[string]*Vertex)}
 }
 
-func NewGraphFromEdges(edges [][]int) *Graph {
-	graph := NewGraph()
-	for _, edge := range edges {
-		graph.AddVertex(strconv.Itoa(edge[0]))
-		graph.AddVertex(strconv.Itoa(edge[1]))
-		graph.AddDirectedEdge(strconv.Itoa(edge[0]), strconv.Itoa(edge[1]), edge[2])
+func (g *Graph) GetAllVertex() []*Vertex {
+	vertices := make([]*Vertex, 0)
+	for _, v := range g.vertices {
+		vertices = append(vertices, v)
 	}
-	return graph
+	return vertices
 }
 
 func (g *Graph) AddVertex(key string) {
@@ -241,11 +239,12 @@ func (s *Stack) Push(data string) {
 	s.items = append(s.items, data)
 }
 
-func (s *Stack) Pop() {
+func (s *Stack) Pop() error {
 	if s.IsEmpty() {
-		return
+		return fmt.Errorf("stack is empty")
 	}
 	s.items = s.items[:len(s.items)-1]
+	return nil
 }
 
 func (s *Stack) Top() (string, error) {
@@ -284,21 +283,48 @@ func NewStack() *Stack {
 	return &Stack{}
 }
 
-func NewStackFromStringSlice(items []string) *Stack {
-	return &Stack{items: items}
-}
-
-func NewStackFromIntSlice(items []int) *Stack {
-	stack := &Stack{}
-	for _, item := range items {
-		stack.Push(strconv.Itoa(item))
-	}
-	return stack
-}
-
 func tarzans(g *Graph) [][]string {
-	// TODO: Implement Tarzan's algorithm
-	g = nil
-	return nil
+	id := 0
+	ids, low, vis := make(map[string]int), make(map[string]int), make(map[string]bool)
+	var startVertex string
+
+	g.ForEachVertex(func(vtx *Vertex) {
+		if startVertex == "" {
+			startVertex = vtx.GetKey()
+		}
+	})
+
+	if startVertex == "" {
+		return nil
+	}
+
+	var bridges [][]string
+
+	var dfs func(v, parent string)
+	dfs = func(v, parent string) {
+		vis[v] = true
+		ids[v] = id
+		low[v] = id
+		id++
+
+		g.GetVertex(v).ForEachEdge(func(n string, w int) {
+			if n == parent {
+				return
+			}
+			if !vis[n] {
+				dfs(n, v)
+				low[v] = min(low[v], low[n])
+				if ids[v] < low[n] {
+					bridges = append(bridges, []string{v, n})
+				}
+			} else {
+				low[v] = min(low[v], ids[n])
+			}
+		})
+	}
+
+	dfs(startVertex, "")
+
+	return bridges
 }
 

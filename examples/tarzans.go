@@ -29,8 +29,12 @@ func Tarzans() {
 	}
 
 	for _, edge := range edges {
-		graph.AddDirectedEdge(edge.from, edge.to, edge.weight)
+		graph.AddUnDirectedEdge(edge.from, edge.to, edge.weight)
 	}
+
+	// Print the graph
+	log.Println("Graph created")
+	graph.Print()
 
 	bridges := graph.FindBridges()
 

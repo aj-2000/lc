@@ -7,5 +7,6 @@ go run .
 
 # TODOS
 
-1. Add support different vertexs -> int, string(supported), etc
+1. Add support different vertexs, Stacks -> int, string(supported), pair etc
 2. Implement tarzan's algo
+3. Add tests

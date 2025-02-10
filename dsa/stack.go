@@ -2,7 +2,6 @@ package dsa
 
 import (
 	"fmt"
-	"strconv"
 )
 
 type Stack struct {
@@ -13,11 +12,12 @@ func (s *Stack) Push(data string) {
 	s.items = append(s.items, data)
 }
 
-func (s *Stack) Pop() {
+func (s *Stack) Pop() error {
 	if s.IsEmpty() {
-		return
+		return fmt.Errorf("stack is empty")
 	}
 	s.items = s.items[:len(s.items)-1]
+	return nil
 }
 
 func (s *Stack) Top() (string, error) {
@@ -54,16 +54,4 @@ func (s *Stack) ForEach(f func(string)) {
 
 func NewStack() *Stack {
 	return &Stack{}
-}
-
-func NewStackFromStringSlice(items []string) *Stack {
-	return &Stack{items: items}
-}
-
-func NewStackFromIntSlice(items []int) *Stack {
-	stack := &Stack{}
-	for _, item := range items {
-		stack.Push(strconv.Itoa(item))
-	}
-	return stack
 }
