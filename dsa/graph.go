@@ -1,6 +1,9 @@
 package dsa
 
-import "fmt"
+import (
+	"fmt"
+	"strconv"
+)
 
 type Vertex struct {
 	key   string
@@ -25,7 +28,20 @@ func NewGraph() *Graph {
 	return &Graph{vertices: make(map[string]*Vertex)}
 }
 
+func NewGraphFromEdges(edges [][]int) *Graph {
+	graph := NewGraph()
+	for _, edge := range edges {
+		graph.AddVertex(strconv.Itoa(edge[0]))
+		graph.AddVertex(strconv.Itoa(edge[1]))
+		graph.AddDirectedEdge(strconv.Itoa(edge[0]), strconv.Itoa(edge[1]), edge[2])
+	}
+	return graph
+}
+
 func (g *Graph) AddVertex(key string) {
+	if _, ok := g.vertices[key]; ok {
+		return
+	}
 	g.vertices[key] = &Vertex{key, make(map[string]int)}
 }
 
@@ -58,10 +74,14 @@ func (g *Graph) GetVertex(key string) *Vertex {
 }
 
 func (g *Graph) FindShortestPath(start, end string) ([]string, int) {
-	return Dijkstra(g, start, end)
+	return dijkstra(g, start, end)
 }
 
-func (g *Graph) Visualize() {
+func (g *Graph) FindBridges() [][]string {
+	return tarzans(g)
+}
+
+func (g *Graph) Print() {
 	graph := ""
 	for _, v := range g.vertices {
 		graph += fmt.Sprintf("%s -> ", v.GetKey())

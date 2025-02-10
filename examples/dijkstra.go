@@ -32,11 +32,11 @@ func Dijkstra() {
 	}
 
 	for _, edge := range edges {
-		graph.AddEdge(edge.from, edge.to, edge.weight)
+		graph.AddUnDirectedEdge(edge.from, edge.to, edge.weight)
 	}
 
 	log.Println("Graph created")
-	graph.Visualize()
+	graph.Print()
 
 	// Find shortest path from A to G
 	log.Println("Finding shortest path from A to G")

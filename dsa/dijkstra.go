@@ -4,7 +4,7 @@ import (
 	"container/heap"
 )
 
-func Dijkstra(g *Graph, start, end string) ([]string, int) {
+func dijkstra(g *Graph, start, end string) ([]string, int) {
 	// Min-heap priority queue
 	pq := NewMinHeap()
 	heap.Init(pq)
