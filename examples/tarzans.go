@@ -13,7 +13,7 @@ func Tarzans() {
 	graph := dsa.NewGraph()
 
 	// Add vertices
-	for _, v := range []string{"A", "B", "C", "D"} {
+	for _, v := range []string{"A", "B", "C", "D", "E"} {
 		graph.AddVertex(v)
 	}
 
@@ -26,6 +26,7 @@ func Tarzans() {
 		{"B", "C", 2},
 		{"C", "A", 3},
 		{"A", "D", 1},
+		{"B", "E", 2},
 	}
 
 	for _, edge := range edges {
@@ -37,9 +38,5 @@ func Tarzans() {
 	graph.Print()
 
 	bridges := graph.FindBridges()
-
-	log.Println("Bridges:")
-	for _, bridge := range bridges {
-		log.Println(bridge)
-	}
+	log.Println("Bridges:", bridges)
 }
