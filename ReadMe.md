@@ -11,3 +11,5 @@ go run .
 2. Implement tarzan's algo
 3. Add tests
 4. Use template for tests
+5. TODO: bitset - https://www.scaler.com/topics/golang/golang-set/
+6. https://www.interviewbit.com/problems/maximum-sum-combinations/
