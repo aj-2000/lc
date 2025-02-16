@@ -13,3 +13,4 @@ go run .
 4. Use template for tests
 5. TODO: bitset - https://www.scaler.com/topics/golang/golang-set/
 6. https://www.interviewbit.com/problems/maximum-sum-combinations/
+7. AddVertex is req in graph initialization, can we move this logic to AddEdge only?
